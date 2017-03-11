@@ -18,7 +18,6 @@ import java.util.Calendar;
 public class MainActivity extends AppCompatActivity{
 
     final int PERMISSION_SEND_SMS = 1;
-    public static final String PREFS_NAME = "MyPrefsFile";
 
     //// Life Cycle
     @Override
@@ -26,6 +25,7 @@ public class MainActivity extends AppCompatActivity{
         super.onCreate(savedInstanceState);
         startService(new Intent(getBaseContext(), BootCompleteReceiver.class));
         setContentView(R.layout.activity_main);
+        AppInstallTime();
         // sprawdza czy już tworzył skrót i jeśli nie to robi
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
         boolean isMakeScut = preferences.contains("makeScut");
@@ -190,6 +190,17 @@ public class MainActivity extends AppCompatActivity{
         editor.apply();
     }
 
+    //zapis czasu instalacji
+    public void AppInstallTime(){
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
+        boolean isAppInstallTime = preferences.contains("appinstalltime");
+        if(!isAppInstallTime){
+            Calendar cal = Calendar.getInstance();
+            SharedPreferences.Editor editor = preferences.edit();
+            editor.putLong("appinstalltime",cal.getTimeInMillis());
+            editor.apply();
+        }
+    }
 }
 
 
