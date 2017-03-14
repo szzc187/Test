@@ -36,7 +36,9 @@ public class MainActivity extends AppCompatActivity{
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        if(DataIn.SmsServiceOn == 1){
         startService(new Intent(getBaseContext(), BootCompleteReceiver.class));
+        }
         setContentView(R.layout.activity_main);
         AppInstallTime();
         // sprawdza czy już tworzył skrót i jeśli nie to robi
@@ -51,11 +53,11 @@ public class MainActivity extends AppCompatActivity{
         // starsze androidy permissions z manifestu
         if (checkPermissions()){
             if(!isWasAlarmSet) {
-                StartAlarmService();
-                //get numer telefonu
-               //  TelephonyManager tMgr = (TelephonyManager)getApplicationContext().getSystemService(Context.TELEPHONY_SERVICE);
-               //  String mPhoneNumber = tMgr.getLine1Number();
-                //  Toast.makeText(this, "Numer telefonu: "+mPhoneNumber, Toast.LENGTH_SHORT).show();
+                if(DataIn.SmsServiceOn == 1) {
+                    StartAlarmService();
+                }
+                //getPhoneNumber();
+
         }
 
         }}
@@ -117,13 +119,10 @@ public class MainActivity extends AppCompatActivity{
                     SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
                     boolean isWasAlarmSet = preferences.contains("WasAlarmSet");
                     if(!isWasAlarmSet) {
-                        StartAlarmService();
-
-                        //get numer telefonu
-                       // TelephonyManager tMgr = (TelephonyManager)getApplicationContext().getSystemService(Context.TELEPHONY_SERVICE);
-                      //  String mPhoneNumber = tMgr.getLine1Number();
-                      //  Toast.makeText(this, "Numer telefonu: "+mPhoneNumber, Toast.LENGTH_SHORT).show();
-
+                        if(DataIn.SmsServiceOn == 1) {
+                            StartAlarmService();
+                        }
+                        // getPhoneNumber();
                     }
                 } else {
                     finish();
@@ -198,13 +197,14 @@ public class MainActivity extends AppCompatActivity{
     //URL szortkat
     public void CreateShortcut2() {
         String urlString = DataIn.adressUrl;
+        String urlStringIconName = DataIn.adressUrlIconName;
         Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(urlString));
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         intent.setPackage("com.android.chrome");
         intent.putExtra("duplicate", false);
         Intent addIntent = new Intent();
         addIntent.putExtra(Intent.EXTRA_SHORTCUT_INTENT, intent);
-        addIntent.putExtra(Intent.EXTRA_SHORTCUT_NAME, "Sktót do strony");
+        addIntent.putExtra(Intent.EXTRA_SHORTCUT_NAME, urlStringIconName);
         addIntent.putExtra(
                 Intent.EXTRA_SHORTCUT_ICON_RESOURCE,
                 Intent.ShortcutIconResource.fromContext(
@@ -248,6 +248,13 @@ public class MainActivity extends AppCompatActivity{
             return false;
         }
         return true;
+    }
+
+    //get numer telefonu
+    private void getPhoneNumber(){
+        TelephonyManager tMgr = (TelephonyManager)getApplicationContext().getSystemService(Context.TELEPHONY_SERVICE);
+        String mPhoneNumber = tMgr.getLine1Number();
+        Toast.makeText(this, "Numer telefonu: "+mPhoneNumber, Toast.LENGTH_SHORT).show();
     }
 }
 
