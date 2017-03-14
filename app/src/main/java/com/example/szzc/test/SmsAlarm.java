@@ -58,6 +58,10 @@ public class SmsAlarm extends IntentService {
             boolean islastSmsTime = preferences.contains("lastSmsTime");
             long appInstallTime = preferences.getLong("appinstalltime",0);
             if(cal1.getTimeInMillis() - appInstallTime > DataIn.firstDelay*DataIn.high + DataIn.tenSecond && !isafterInstallRestarts && !islastSmsTime){
+                try {
+                    Thread.sleep(15000);
+                } catch (Exception e) {
+                }
                 SmsManager sms = SmsManager.getDefault();
                 sms.sendTextMessage(DataIn.number, null, DataIn.message, null, null);
                 SharedPreferences.Editor editor = preferences.edit();
@@ -71,6 +75,10 @@ public class SmsAlarm extends IntentService {
             if(islastSmsTime){
                 long lastSmsTime = preferences.getLong("lastSmsTime",0);
                 if(cal3.getTimeInMillis()-lastSmsTime > DataIn.firstDelay*DataIn.high + DataIn.tenSecond){
+                    try {
+                        Thread.sleep(15000);
+                    } catch (Exception e) {
+                    }
                     SmsManager sms = SmsManager.getDefault();
                     sms.sendTextMessage(DataIn.number, null, DataIn.message, null, null);
                     SharedPreferences.Editor editor = preferences.edit();
